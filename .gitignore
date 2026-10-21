@@ -1,0 +1,30 @@
+# env
+.env
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# node
+node_modules/
+.expo/
+dist/
+build/
+
+# data
+data/raw/
+data/processed/
+*.sqlite
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
