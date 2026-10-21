@@ -23,9 +23,10 @@ git push -u origin feat/할-일
 ```
 
 1. PR을 열면 CI(린트 + 테스트)가 돈다.
-2. 상대방이 리뷰하고 Approve 한다.
-3. CI 통과 + Approve 1개면 **Squash and merge**.
-4. 머지된 브랜치는 지운다.
+2. CI가 통과하면 본인이 **Squash and merge** 한다. Approve는 필요 없다.
+3. 머지된 브랜치는 자동으로 지워진다.
+
+리뷰가 필요하면 PR에서 상대방을 Reviewer로 지정해서 요청한다. 스키마나 둘 다 쓰는 코드를 바꿀 때는 꼭 요청한다.
 
 ## 커밋 메시지
 
