@@ -4,7 +4,6 @@
 
 - 서비스 범위: 국내 전체
 - MVP 검증 지역: 제주
-- 기획서: https://claude.ai/code/artifact/65bb5f93-e5f8-4f8e-a36f-e9948c79e1d8
 
 ## 구조
 
