@@ -1,3 +1,6 @@
 # app
 
-모바일 앱. Expo(React Native)와 PWA 중 1주차에 결정한 뒤 여기에 만든다.
+Expo(React Native) 앱.
+
+- 화면 구현: sonyeseul63
+- UI/UX 디자인, 로고: Gwakgarin
