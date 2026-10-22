@@ -39,4 +39,4 @@ TourAPI 빈 응답 처리
 
 ## PR 크기
 
-하루 안에 리뷰할 수 있는 크기로. 스키마(`backend/app/schemas/`)를 바꾸는 PR은 따로 올리고 같이 확인한다.
+하루 안에 리뷰할 수 있는 크기로. 스키마(`ai/app/schemas/`, `docs/api/`)를 바꾸는 PR은 따로 올리고 같이 확인한다.

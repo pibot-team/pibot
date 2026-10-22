@@ -1,0 +1,947 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pibot Backend Tools",
+    "description": "Spring 백엔드가 구현하고 AI 서버가 호출한다. 요청 헤더에 X-Internal-Key 필요.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/internal/tools/travel-time": {
+      "post": {
+        "summary": "두 지점 사이 이동시간과 거리",
+        "operationId": "get_travel_time",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TravelTimeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelTimeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/tools/optimize-route": {
+      "post": {
+        "summary": "고른 장소들의 방문 순서와 도착 시각을 정한다",
+        "operationId": "optimize_route",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizeRouteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizeRouteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/tools/weather": {
+      "post": {
+        "summary": "시간대별 강수확률과 강수량",
+        "operationId": "get_weather",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeatherIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeatherOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/tools/parking": {
+      "post": {
+        "summary": "근처 주차장과 걸어가는 시간",
+        "operationId": "find_parking",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParkingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParkingOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/tools/place-detail": {
+      "post": {
+        "summary": "장소 상세: 영업시간, 휴무, 주차, 설명",
+        "operationId": "get_place_detail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceDetailIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Day": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "type": "array",
+            "title": "Stops"
+          },
+          "legs": {
+            "items": {
+              "$ref": "#/components/schemas/Leg"
+            },
+            "type": "array",
+            "title": "Legs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "stops"
+        ],
+        "title": "Day"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HourlyWeather": {
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "title": "Hour"
+          },
+          "rain_prob": {
+            "type": "integer",
+            "title": "Rain Prob"
+          },
+          "rain_mm": {
+            "type": "number",
+            "title": "Rain Mm"
+          },
+          "temp_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temp C"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hour",
+          "rain_prob",
+          "rain_mm"
+        ],
+        "title": "HourlyWeather"
+      },
+      "LatLng": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "title": "LatLng"
+      },
+      "Leg": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "minutes": {
+            "type": "integer",
+            "title": "Minutes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "minutes"
+        ],
+        "title": "Leg",
+        "description": "stops[i] -> stops[i + 1] 이동."
+      },
+      "OpeningHours": {
+        "properties": {
+          "open": {
+            "type": "string",
+            "format": "time",
+            "title": "Open"
+          },
+          "close": {
+            "type": "string",
+            "format": "time",
+            "title": "Close"
+          }
+        },
+        "type": "object",
+        "required": [
+          "open",
+          "close"
+        ],
+        "title": "OpeningHours"
+      },
+      "OptimizeRouteIn": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "start_at": {
+            "type": "string",
+            "format": "time",
+            "title": "Start At"
+          },
+          "start_point": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatLng"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "end_point": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatLng"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/RouteStop"
+            },
+            "type": "array",
+            "title": "Stops"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "start_at",
+          "stops"
+        ],
+        "title": "OptimizeRouteIn",
+        "description": "고른 장소들의 방문 순서와 도착 시각을 정한다."
+      },
+      "OptimizeRouteOut": {
+        "properties": {
+          "day": {
+            "$ref": "#/components/schemas/Day"
+          },
+          "total_travel_minutes": {
+            "type": "integer",
+            "title": "Total Travel Minutes"
+          },
+          "unplaced": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unplaced"
+          }
+        },
+        "type": "object",
+        "required": [
+          "day",
+          "total_travel_minutes"
+        ],
+        "title": "OptimizeRouteOut"
+      },
+      "ParkingIn": {
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "radius_m": {
+            "type": "integer",
+            "title": "Radius M",
+            "default": 500
+          }
+        },
+        "type": "object",
+        "required": [
+          "point"
+        ],
+        "title": "ParkingIn"
+      },
+      "ParkingLot": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "walk_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walk Minutes"
+          },
+          "fee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fee"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "lat",
+          "lng"
+        ],
+        "title": "ParkingLot"
+      },
+      "ParkingOut": {
+        "properties": {
+          "lots": {
+            "items": {
+              "$ref": "#/components/schemas/ParkingLot"
+            },
+            "type": "array",
+            "title": "Lots"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lots"
+        ],
+        "title": "ParkingOut"
+      },
+      "Place": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "indoor": {
+            "type": "string",
+            "enum": [
+              "indoor",
+              "outdoor",
+              "mixed",
+              "unknown"
+            ],
+            "title": "Indoor",
+            "default": "unknown"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "closed_weekdays": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Closed Weekdays"
+          },
+          "parking": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parking"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "lat",
+          "lng"
+        ],
+        "title": "Place"
+      },
+      "PlaceDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "indoor": {
+            "type": "string",
+            "enum": [
+              "indoor",
+              "outdoor",
+              "mixed",
+              "unknown"
+            ],
+            "title": "Indoor",
+            "default": "unknown"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "closed_weekdays": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Closed Weekdays"
+          },
+          "parking": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parking"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "overview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overview"
+          },
+          "usage_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Text"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "lat",
+          "lng"
+        ],
+        "title": "PlaceDetail"
+      },
+      "PlaceDetailIn": {
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "title": "Place Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "place_id"
+        ],
+        "title": "PlaceDetailIn"
+      },
+      "RouteStop": {
+        "properties": {
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "stay_minutes": {
+            "type": "integer",
+            "title": "Stay Minutes"
+          },
+          "fixed_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Start"
+          }
+        },
+        "type": "object",
+        "required": [
+          "place",
+          "stay_minutes"
+        ],
+        "title": "RouteStop"
+      },
+      "Stop": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "start": {
+            "type": "string",
+            "format": "time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "time",
+            "title": "End"
+          },
+          "fixed": {
+            "type": "boolean",
+            "title": "Fixed",
+            "default": false
+          },
+          "cost": {
+            "type": "integer",
+            "title": "Cost",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "place",
+          "start",
+          "end"
+        ],
+        "title": "Stop"
+      },
+      "TravelTimeIn": {
+        "properties": {
+          "origin": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "dest": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "depart_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depart At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "origin",
+          "dest"
+        ],
+        "title": "TravelTimeIn",
+        "description": "두 지점 사이 이동시간."
+      },
+      "TravelTimeOut": {
+        "properties": {
+          "minutes": {
+            "type": "integer",
+            "title": "Minutes"
+          },
+          "distance_km": {
+            "type": "number",
+            "title": "Distance Km"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "api",
+              "cache",
+              "estimate"
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "minutes",
+          "distance_km",
+          "source"
+        ],
+        "title": "TravelTimeOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WeatherIn": {
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "point",
+          "date"
+        ],
+        "title": "WeatherIn"
+      },
+      "WeatherOut": {
+        "properties": {
+          "hours": {
+            "items": {
+              "$ref": "#/components/schemas/HourlyWeather"
+            },
+            "type": "array",
+            "title": "Hours"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hours"
+        ],
+        "title": "WeatherOut"
+      }
+    }
+  }
+}

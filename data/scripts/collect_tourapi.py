@@ -1,6 +1,6 @@
 """제주 TourAPI 장소를 모아서 필드별로 빈 값 비율을 출력한다.
 
-    cd backend && python ../data/scripts/collect_tourapi.py
+    cd ai && python ../data/scripts/collect_tourapi.py
 
 결과는 data/raw/jeju_places.json 에 저장 (git에는 안 올라감).
 """
@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "backend"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "ai"))
 
 from app.tools.tourapi import JEJU_AREA_CODE, area_based_list
 
