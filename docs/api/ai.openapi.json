@@ -1,0 +1,1172 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pibot AI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/plan-trip": {
+      "post": {
+        "summary": "조건으로 일정을 만든다",
+        "operationId": "plan_trip",
+        "parameters": [
+          {
+            "name": "x-internal-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanTripOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/replan": {
+      "post": {
+        "summary": "여행 중 상황에 맞춰 남은 일정을 다시 짠다 (선택지 2~3개)",
+        "operationId": "replan",
+        "parameters": [
+          {
+            "name": "x-internal-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplanIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplanOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/fill-gap": {
+      "post": {
+        "summary": "남은 시간 안에 다녀올 곳 3개를 추천한다",
+        "operationId": "fill_gap",
+        "parameters": [
+          {
+            "name": "x-internal-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FillGapIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FillGapOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/search-places": {
+      "post": {
+        "summary": "취향과 조건으로 장소를 찾는다 (RAG)",
+        "operationId": "search_places",
+        "parameters": [
+          {
+            "name": "x-internal-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchPlacesIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchPlacesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/validate-trip": {
+      "post": {
+        "summary": "일정 규칙 위반을 찾는다",
+        "operationId": "validate_trip",
+        "parameters": [
+          {
+            "name": "x-internal-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTripIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateTripOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Day": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "type": "array",
+            "title": "Stops"
+          },
+          "legs": {
+            "items": {
+              "$ref": "#/components/schemas/Leg"
+            },
+            "type": "array",
+            "title": "Legs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "stops"
+        ],
+        "title": "Day"
+      },
+      "FillGapIn": {
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "now": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Now"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Until"
+          },
+          "next_stop": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Stop"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "preferences": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preferences"
+          },
+          "exclude_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exclude Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "location",
+          "now",
+          "until"
+        ],
+        "title": "FillGapIn"
+      },
+      "FillGapOut": {
+        "properties": {
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/GapSuggestion"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "suggestions"
+        ],
+        "title": "FillGapOut"
+      },
+      "GapSuggestion": {
+        "properties": {
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "travel_minutes": {
+            "type": "integer",
+            "title": "Travel Minutes"
+          },
+          "stay_minutes": {
+            "type": "integer",
+            "title": "Stay Minutes"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "place",
+          "travel_minutes",
+          "stay_minutes",
+          "reason"
+        ],
+        "title": "GapSuggestion"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LatLng": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "title": "LatLng"
+      },
+      "Leg": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "minutes": {
+            "type": "integer",
+            "title": "Minutes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "minutes"
+        ],
+        "title": "Leg",
+        "description": "stops[i] -> stops[i + 1] 이동."
+      },
+      "OpeningHours": {
+        "properties": {
+          "open": {
+            "type": "string",
+            "format": "time",
+            "title": "Open"
+          },
+          "close": {
+            "type": "string",
+            "format": "time",
+            "title": "Close"
+          }
+        },
+        "type": "object",
+        "required": [
+          "open",
+          "close"
+        ],
+        "title": "OpeningHours"
+      },
+      "Place": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "indoor": {
+            "type": "string",
+            "enum": [
+              "indoor",
+              "outdoor",
+              "mixed",
+              "unknown"
+            ],
+            "title": "Indoor",
+            "default": "unknown"
+          },
+          "hours": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpeningHours"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "closed_weekdays": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Closed Weekdays"
+          },
+          "parking": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parking"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "lat",
+          "lng"
+        ],
+        "title": "Place"
+      },
+      "PlaceHit": {
+        "properties": {
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "place",
+          "score"
+        ],
+        "title": "PlaceHit"
+      },
+      "PlanTripOut": {
+        "properties": {
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            },
+            "type": "array",
+            "title": "Violations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trip"
+        ],
+        "title": "PlanTripOut"
+      },
+      "ReplanIn": {
+        "properties": {
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "event": {
+            "$ref": "#/components/schemas/TripEvent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trip",
+          "event"
+        ],
+        "title": "ReplanIn"
+      },
+      "ReplanOption": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "changed_stop_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Changed Stop Ids"
+          },
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            },
+            "type": "array",
+            "title": "Violations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "trip",
+          "changed_stop_ids"
+        ],
+        "title": "ReplanOption"
+      },
+      "ReplanOut": {
+        "properties": {
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/ReplanOption"
+            },
+            "type": "array",
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "title": "ReplanOut"
+      },
+      "SearchPlacesIn": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "near": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatLng"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "radius_km": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Radius Km"
+          },
+          "open_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open At"
+          },
+          "indoor": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "indoor",
+                    "outdoor",
+                    "mixed",
+                    "unknown"
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indoor"
+          },
+          "exclude_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Exclude Ids"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "SearchPlacesIn",
+        "description": "취향·조건으로 장소 찾기 (RAG)."
+      },
+      "SearchPlacesOut": {
+        "properties": {
+          "hits": {
+            "items": {
+              "$ref": "#/components/schemas/PlaceHit"
+            },
+            "type": "array",
+            "title": "Hits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hits"
+        ],
+        "title": "SearchPlacesOut"
+      },
+      "Stop": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "start": {
+            "type": "string",
+            "format": "time",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "time",
+            "title": "End"
+          },
+          "fixed": {
+            "type": "boolean",
+            "title": "Fixed",
+            "default": false
+          },
+          "cost": {
+            "type": "integer",
+            "title": "Cost",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "place",
+          "start",
+          "end"
+        ],
+        "title": "Stop"
+      },
+      "Trip": {
+        "properties": {
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "End Date"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/Day"
+            },
+            "type": "array",
+            "title": "Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "region",
+          "start_date",
+          "end_date",
+          "days"
+        ],
+        "title": "Trip"
+      },
+      "TripEvent": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "rain",
+              "waiting",
+              "delay",
+              "tired",
+              "closed",
+              "free_time"
+            ],
+            "title": "Type"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "location": {
+            "$ref": "#/components/schemas/LatLng"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "place_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Id"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "at",
+          "location"
+        ],
+        "title": "TripEvent"
+      },
+      "TripRequest": {
+        "properties": {
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Start Date"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "title": "End Date"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "car",
+              "transit",
+              "walk"
+            ],
+            "title": "Mode",
+            "default": "car"
+          },
+          "travelers": {
+            "type": "integer",
+            "title": "Travelers",
+            "default": 1
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget"
+          },
+          "preferences": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preferences"
+          },
+          "pace": {
+            "type": "string",
+            "enum": [
+              "relaxed",
+              "normal",
+              "packed"
+            ],
+            "title": "Pace",
+            "default": "normal"
+          },
+          "start_point": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LatLng"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "region",
+          "start_date",
+          "end_date"
+        ],
+        "title": "TripRequest"
+      },
+      "ValidateTripIn": {
+        "properties": {
+          "trip": {
+            "$ref": "#/components/schemas/Trip"
+          },
+          "rainy_hours_by_date": {
+            "additionalProperties": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "propertyNames": {
+              "format": "date"
+            },
+            "type": "object",
+            "title": "Rainy Hours By Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trip"
+        ],
+        "title": "ValidateTripIn"
+      },
+      "ValidateTripOut": {
+        "properties": {
+          "violations": {
+            "items": {
+              "$ref": "#/components/schemas/Violation"
+            },
+            "type": "array",
+            "title": "Violations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "violations"
+        ],
+        "title": "ValidateTripOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Violation": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "closed_day",
+              "outside_hours",
+              "hours_unknown",
+              "travel_time",
+              "rain_outdoor",
+              "budget"
+            ],
+            "title": "Type"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning"
+            ],
+            "title": "Severity",
+            "default": "error"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "stop_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Id"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "title": "Violation"
+      }
+    }
+  }
+}
