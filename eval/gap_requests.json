@@ -1,0 +1,22 @@
+[
+  {"id": "g01", "location": {"lat": 33.3893, "lng": 126.2393}, "now": "2026-11-04T12:10", "minutes": 60, "next_place_id": "sample-r05", "preferences": [], "rain": null},
+  {"id": "g02", "location": {"lat": 33.3893, "lng": 126.2393}, "now": "2026-11-04T14:00", "minutes": 90, "next_place_id": null, "preferences": ["카페"], "rain": null},
+  {"id": "g03", "location": {"lat": 33.4581, "lng": 126.9425}, "now": "2026-11-05T10:30", "minutes": 45, "next_place_id": "sample-r02", "preferences": ["바다"], "rain": null},
+  {"id": "g04", "location": {"lat": 33.5122, "lng": 126.5269}, "now": "2026-11-06T15:00", "minutes": 120, "next_place_id": "sample-r01", "preferences": ["미술"], "rain": null},
+  {"id": "g05", "location": {"lat": 33.246, "lng": 126.564}, "now": "2026-11-07T11:20", "minutes": 30, "next_place_id": "jeju-024", "preferences": [], "rain": null},
+  {"id": "g06", "location": {"lat": 33.3964, "lng": 126.3446}, "now": "2026-11-08T13:30", "minutes": 75, "next_place_id": "jeju-019", "preferences": ["실내"], "rain": {"west": [13, 14, 15, 16]}},
+  {"id": "g07", "location": {"lat": 33.49, "lng": 126.81}, "now": "2026-11-09T14:10", "minutes": 60, "next_place_id": "jeju-006", "preferences": ["숲"], "rain": null},
+  {"id": "g08", "location": {"lat": 33.5432, "lng": 126.6694}, "now": "2026-11-10T16:00", "minutes": 20, "next_place_id": null, "preferences": [], "rain": null},
+  {"id": "g09", "location": {"lat": 33.3059, "lng": 126.2895}, "now": "2026-11-11T10:00", "minutes": 100, "next_place_id": "jeju-020", "preferences": ["카페", "실내"], "rain": {"west": [9, 10, 11, 12, 13]}},
+  {"id": "g10", "location": {"lat": 33.252, "lng": 126.56}, "now": "2026-11-12T13:00", "minutes": 50, "next_place_id": "jeju-021", "preferences": ["산책"], "rain": null},
+  {"id": "g11", "location": {"lat": 33.4523, "lng": 126.489}, "now": "2026-11-13T11:00", "minutes": 40, "next_place_id": "sample-r01", "preferences": ["미술"], "rain": null},
+  {"id": "g12", "location": {"lat": 33.424, "lng": 126.9306}, "now": "2026-11-14T15:30", "minutes": 80, "next_place_id": "sample-r02", "preferences": ["오름", "바다"], "rain": {"east": [15, 16, 17]}},
+  {"id": "g13", "location": {"lat": 33.366, "lng": 126.357}, "now": "2026-11-15T09:40", "minutes": 110, "next_place_id": null, "preferences": ["실내"], "rain": null},
+  {"id": "g14", "location": {"lat": 33.5159, "lng": 126.5119}, "now": "2026-11-16T17:00", "minutes": 60, "next_place_id": "jeju-007", "preferences": ["시장"], "rain": null},
+  {"id": "g15", "location": {"lat": 33.29, "lng": 126.369}, "now": "2026-11-17T14:00", "minutes": 25, "next_place_id": "jeju-019", "preferences": [], "rain": null},
+  {"id": "g16", "location": {"lat": 33.42, "lng": 126.63}, "now": "2026-11-18T12:30", "minutes": 90, "next_place_id": "jeju-005", "preferences": ["숲", "산책"], "rain": {"east": [12, 13, 14]}},
+  {"id": "g17", "location": {"lat": 33.463, "lng": 126.31}, "now": "2026-11-19T16:30", "minutes": 70, "next_place_id": "jeju-015", "preferences": ["바다"], "rain": null},
+  {"id": "g18", "location": {"lat": 33.2522, "lng": 126.6236}, "now": "2026-11-20T10:15", "minutes": 35, "next_place_id": "jeju-022", "preferences": [], "rain": null},
+  {"id": "g19", "location": {"lat": 33.5135, "lng": 126.5487}, "now": "2026-11-21T19:00", "minutes": 60, "next_place_id": null, "preferences": ["미술"], "rain": null},
+  {"id": "g20", "location": {"lat": 33.3925, "lng": 126.3667}, "now": "2026-11-22T13:00", "minutes": 120, "next_place_id": "sample-r05", "preferences": ["카페", "바다"], "rain": {"west": [13, 14, 15]}}
+]

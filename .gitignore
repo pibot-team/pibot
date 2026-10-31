@@ -28,3 +28,4 @@ data/processed/
 .DS_Store
 .idea/
 .vscode/
+eval/results/
