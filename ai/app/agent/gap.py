@@ -4,12 +4,14 @@ import datetime as dt
 
 from app.agent.search import is_open
 from app.schemas import tools as t
-from app.tools.mock import MockToolbox, stay_minutes
+from app.tools.mock import MockToolbox, haversine_km, stay_minutes
 
 BUFFER_MINUTES = 5
 MIN_STAY = 15
 # 식당 웨이팅 중에 다른 식당을 추천하지 않는다
 SKIP_CATEGORIES = {"음식점"}
+# 이 거리 안의 장소는 지금 있는 곳으로 보고 추천하지 않는다
+HERE_RADIUS_KM = 0.2
 
 
 def _minutes_between(a: dt.datetime, b: dt.datetime) -> int:
@@ -25,6 +27,8 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
     scored = []
     for place in tools.all_places():
         if place.id in exclude or place.category in SKIP_CATEGORIES:
+            continue
+        if haversine_km(req.location, t.LatLng(lat=place.lat, lng=place.lng)) <= HERE_RADIUS_KM:
             continue
         if raining and place.indoor == "outdoor":
             continue
