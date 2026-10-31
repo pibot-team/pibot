@@ -577,6 +577,35 @@
             ],
             "title": "Parking"
           },
+          "typical_stay_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Typical Stay Minutes"
+          },
+          "fee": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fee"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tags"
+          },
           "source": {
             "anyOf": [
               {
@@ -1119,7 +1148,10 @@
               "hours_unknown",
               "travel_time",
               "rain_outdoor",
-              "budget"
+              "budget",
+              "invalid_time",
+              "missing_meal",
+              "no_parking"
             ],
             "title": "Type"
           },

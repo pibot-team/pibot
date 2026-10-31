@@ -50,7 +50,7 @@ def fill_gap(req: t.FillGapIn):
 @app.post("/tools/search-places", response_model=t.SearchPlacesOut, dependencies=internal,
           summary="취향과 조건으로 장소를 찾는다 (RAG)", operation_id="search_places")
 def search_places(req: t.SearchPlacesIn):
-    raise NotImplementedError
+    return entry.search_places(req)
 
 
 @app.post("/tools/validate-trip", response_model=t.ValidateTripOut, dependencies=internal,

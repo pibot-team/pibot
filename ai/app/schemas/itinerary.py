@@ -30,6 +30,9 @@ class Place(BaseModel):
     # 정기 휴무 요일 (0=월 ... 6=일)
     closed_weekdays: list[int] = Field(default_factory=list)
     parking: bool | None = None
+    typical_stay_minutes: int | None = None
+    fee: int | None = None
+    tags: list[str] = Field(default_factory=list)
     source: str | None = None
 
 
@@ -72,6 +75,9 @@ ViolationType = Literal[
     "travel_time",
     "rain_outdoor",
     "budget",
+    "invalid_time",
+    "missing_meal",
+    "no_parking",
 ]
 
 

@@ -33,6 +33,14 @@ def test_validate_trip_returns_violations():
     assert [v["type"] for v in res.json()["violations"]] == ["travel_time"]
 
 
-def test_unimplemented_agent_returns_501():
+def test_plan_trip():
     req = {"region": "jeju", "start_date": "2026-11-03", "end_date": "2026-11-04"}
-    assert client.post("/agent/plan-trip", json=req).status_code == 501
+    res = client.post("/agent/plan-trip", json=req)
+    assert res.status_code == 200
+    assert len(res.json()["trip"]["days"]) == 2
+
+
+def test_replan_not_ready_yet():
+    req = {"trip": TRIP, "event": {"type": "rain", "at": "2026-11-03T14:00:00",
+                                   "location": {"lat": 33.4, "lng": 126.3}}}
+    assert client.post("/agent/replan", json=req).status_code == 501

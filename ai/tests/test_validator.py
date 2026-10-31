@@ -61,3 +61,30 @@ def test_budget():
     trip = Trip(region="jeju", start_date=TUE, end_date=TUE, budget=10000,
                 days=[Day(date=TUE, stops=[stop("a", time(10), time(11), cost=15000)])])
     assert types(check_trip(trip)) == ["budget"]
+
+
+def test_overlapping_stops():
+    day = Day(date=TUE, stops=[stop("a", time(10), time(11)), stop("b", time(10, 30), time(12))])
+    assert "invalid_time" in types(check_day(day))
+
+
+def test_missing_lunch_is_warning():
+    day = Day(date=TUE, stops=[stop("a", time(10), time(12)), stop("b", time(13), time(15))],
+              legs=[Leg(minutes=10)])
+    [v] = check_day(day)
+    assert v.type == "missing_meal" and v.severity == "warning"
+
+
+def test_lunch_at_restaurant_is_fine():
+    lunch = place("r", category="음식점")
+    day = Day(date=TUE, stops=[stop("a", time(10), time(11)), stop("r", time(12), time(13), place=lunch),
+                               stop("b", time(14), time(15))],
+              legs=[Leg(minutes=10), Leg(minutes=10)])
+    assert check_day(day) == []
+
+
+def test_no_parking_only_for_car():
+    no_lot = place("a", parking=False)
+    day = Day(date=TUE, stops=[stop("a", time(10), time(11), place=no_lot)])
+    assert types(check_day(day, mode="car")) == ["no_parking"]
+    assert check_day(day, mode="walk") == []
