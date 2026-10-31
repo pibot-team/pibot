@@ -44,3 +44,13 @@ def test_stays_in_budget():
     out = plan(2, budget=60000)
     total = sum(s.cost for d in out.trip.days for s in d.stops)
     assert total <= 60000 or errors(out)
+
+
+def test_budget_keeps_lunch_every_day():
+    # 예산 넘으면 식당 말고 입장료 있는 곳을 뺀다
+    out = plan(2, budget=50000, pace="relaxed", preferences=["산책", "숲"])
+    for day in out.trip.days:
+        assert any(s.place.category == "음식점" for s in day.stops)
+    assert not [v for v in out.violations if v.type == "missing_meal"]
+    total = sum(s.cost for d in out.trip.days for s in d.stops)
+    assert total <= 50000
