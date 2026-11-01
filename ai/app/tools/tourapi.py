@@ -9,7 +9,7 @@ JEJU_AREA_CODE = 39
 
 def _common() -> dict:
     return {
-        "serviceKey": settings.tour_api_key,
+        "serviceKey": settings.data_go_kr_key,
         "MobileOS": "ETC",
         "MobileApp": "Pibot",
         "_type": "json",
