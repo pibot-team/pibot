@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="480" height="480">
+<style>
+.pl-draw{stroke-dasharray:100;stroke-dashoffset:100;animation:pl-draw 3.2s infinite ease-in-out}
+.pl-pin{transform-box:fill-box;transform-origin:center;animation:pl-pin 3.2s infinite ease-out}
+.pl-look{animation:pl-look 3.2s infinite ease-in-out}
+.pl-bob{animation:pl-bob 1.6s infinite ease-in-out}
+@keyframes pl-draw{0%{stroke-dashoffset:100}75%,92%{stroke-dashoffset:0}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes pl-pin{0%,72%{transform:scale(0)}80%{transform:scale(1.35)}86%,96%{transform:scale(1)}100%{transform:scale(0)}}
+@keyframes pl-look{0%{transform:translateX(-4px)}75%{transform:translateX(5px)}100%{transform:translateX(-4px)}}
+@keyframes pl-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){.pl-draw{animation:none;stroke-dashoffset:0}.pl-pin{animation:none;transform:none}.pl-look,.pl-bob{animation:none}}
+</style>
+<defs>
+<radialGradient id="pl-dot" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset="0.55" stop-color="#E4E6FF"></stop><stop offset="1" stop-color="#A9B4FF"></stop></radialGradient>
+<mask id="pl-reveal" maskUnits="userSpaceOnUse" x="-80" y="-60" width="160" height="120"><path class="pl-draw" d="M-46 14 Q-24 -24 4 -2 T44 -20" pathLength="100" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"></path></mask>
+</defs>
+<g transform="translate(0 -6) scale(0.82)">
+<ellipse cx="120" cy="206" rx="50" ry="6" fill="#4A5BD9" fill-opacity="0.12"></ellipse>
+<line x1="132" y1="64" x2="132" y2="44" stroke="#6F8BFF" stroke-width="7" stroke-linecap="round"></line>
+<g class="pl-bob"><circle cx="132" cy="34" r="12" fill="url(#pl-dot)"></circle><circle cx="127.8" cy="29.8" r="3.4" fill="#FFFFFF"></circle></g>
+<rect x="56" y="62" width="128" height="140" rx="56" fill="#6F8BFF"></rect>
+<rect x="70" y="84" width="100" height="64" rx="32" fill="#1F2030"></rect>
+<path d="M84 96 Q100 88 124 90" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="5" stroke-linecap="round"></path>
+<g class="pl-look" fill="none" stroke="#C9D3FF" stroke-width="4.5" stroke-linecap="round"><circle cx="104" cy="122" r="7"></circle><line x1="97" y1="122" x2="97" y2="135.3"></line><circle cx="138" cy="122" r="7"></circle><line x1="131" y1="122" x2="131" y2="108.7"></line></g>
+</g>
+<g transform="translate(120 150) rotate(-6)">
+<path d="M-62 -34 L-22 -44 L22 -34 L62 -44 L62 30 L22 40 L-22 30 L-62 40 Z" fill="#FFFFFF" stroke="#D6DBFF" stroke-width="3" stroke-linejoin="round"></path>
+<path d="M-22 -44 V30 M22 -34 V40" stroke="#E3E5FA" stroke-width="3"></path>
+<circle cx="-46" cy="14" r="5" fill="#A9BCFF"></circle>
+<path d="M-46 14 Q-24 -24 4 -2 T44 -20" fill="none" stroke="#6F8BFF" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9" mask="url(#pl-reveal)"></path>
+<g class="pl-pin"><circle cx="44" cy="-20" r="6" fill="#4A5BD9"></circle></g>
+</g>
+</svg>
