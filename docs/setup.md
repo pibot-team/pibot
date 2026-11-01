@@ -55,7 +55,7 @@ PR을 올리면 CI에서 같은 걸 돌린다. 둘 다 통과해야 머지할 �
 
 ## 제주 데이터 빈 값 확인
 
-`.env`에 `TOUR_API_KEY`를 넣은 뒤:
+`.env`에 `DATA_GO_KR_KEY`를 넣은 뒤:
 
 ```bash
 cd ai
@@ -69,10 +69,10 @@ python ../data/scripts/collect_tourapi.py
 
 | 변수 | 어디서 | 쓰는 곳 |
 | --- | --- | --- |
-| `TOUR_API_KEY` | 공공데이터포털 - 한국관광공사 국문 관광정보 서비스 | backend, ai(빈 값 확인) |
-| `KMA_API_KEY` | 공공데이터포털 - 기상청 단기예보 조회서비스 | backend |
+| `DATA_GO_KR_KEY` | 공공데이터포털 마이페이지 - 일반 인증키. 관광정보·단기예보·출몰시각을 각각 활용신청하면 이 키 하나로 호출 | backend, ai(빈 값 확인) |
+| `VISITJEJU_API_KEY` | 비짓제주 오픈API (api.visitjeju.net) | ai |
 | `KAKAO_REST_API_KEY` | 카카오 개발자 - 내 애플리케이션 - REST API 키 | backend |
-| `ANTHROPIC_API_KEY` | Anthropic Console | ai |
+| `ANTHROPIC_API_KEY` | Anthropic Console. 월 사용 한도 걸어 두기 | ai |
 | `INTERNAL_API_KEY` | 아무 긴 문자열. 둘이 같은 값 | backend, ai |
 
 키는 단톡방이나 코드에 붙이지 말고 각자 `.env`에만 둔다.
