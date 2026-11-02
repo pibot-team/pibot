@@ -24,4 +24,4 @@
 
 - SVG 원본과 PNG(480px, 투명 배경)가 같이 있다
 - 앱에서는 이 폴더에서 `app/assets/`로 복사해서 쓴다
-- 움직이는 버전: `pibot-wave-animated.svg`(깜빡 → 웃으며 손 흔들기, 스플래시용), `pibot-planning-animated.svg`(지도 점선 로딩). 브라우저에서 열면 움직인다. 앱에서는 이걸 보고 Rive나 Reanimated로 만든다
+- 움직이는 버전: `pibot-wave-animated.svg`(깜빡 → 웃으며 손 흔들기, 스플래시용), `pibot-planning-animated.svg`(지도 점선 로딩, 온보딩 1), `pibot-rain-animated.svg`(빗방울, 온보딩 2), `pibot-sunset-animated.svg`(해·물빛·새, 온보딩 3). 브라우저에서 열면 움직인다. 앱에서는 이걸 보고 Rive나 Reanimated로 만든다
