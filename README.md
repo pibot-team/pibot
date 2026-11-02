@@ -8,8 +8,6 @@
 
 ## 피봇
 
-같이 여행 다니는 캐릭터. 상황에 따라 모습이 바뀐다.
-
 <table align="center">
   <tr>
     <td align="center"><img src="docs/brand/pibot/pibot-wave-animated.svg" width="140" alt="인사하는 피봇"></td>
