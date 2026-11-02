@@ -6,9 +6,9 @@
 .pv-arm{transform-box:view-box;transform-origin:186px 102px;animation:pv-wave 4s infinite ease-in-out}
 .pv-dot{animation:pv-bob 2s infinite ease-in-out}
 .pv-body{animation:pv-hop 4s infinite ease-in-out}
-@keyframes pv-pb{0%,48%{opacity:1;transform:scaleY(1)}54%{opacity:1;transform:scaleY(.1)}56%,92%{opacity:0;transform:scaleY(.1)}96%{opacity:1;transform:scaleY(.1)}100%{opacity:1;transform:scaleY(1)}}
-@keyframes pv-happy{0%,54%{opacity:0;transform:scaleY(.2)}60%,88%{opacity:1;transform:scaleY(1)}92%,100%{opacity:0;transform:scaleY(.2)}}
-@keyframes pv-wave{0%,56%{transform:rotate(0deg)}64%{transform:rotate(-18deg)}72%{transform:rotate(8deg)}80%{transform:rotate(-18deg)}88%,100%{transform:rotate(0deg)}}
+@keyframes pv-pb{0%,44%{opacity:1;transform:scaleY(1)}48%{opacity:1;transform:scaleY(.1)}49%,92%{opacity:0;transform:scaleY(.1)}93%{opacity:1;transform:scaleY(.1)}97%,100%{opacity:1;transform:scaleY(1)}}
+@keyframes pv-happy{0%,49%{opacity:0;transform:scaleY(.1)}50%{opacity:1;transform:scaleY(.1)}54%,87%{opacity:1;transform:scaleY(1)}91%{opacity:1;transform:scaleY(.1)}92%,100%{opacity:0;transform:scaleY(.1)}}
+@keyframes pv-wave{0%,48%{opacity:0;transform:rotate(30deg)}54%{opacity:1;transform:rotate(0deg)}62%{transform:rotate(-16deg)}70%{transform:rotate(8deg)}78%{transform:rotate(-16deg)}86%{opacity:1;transform:rotate(0deg)}92%,100%{opacity:0;transform:rotate(30deg)}}
 @keyframes pv-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @keyframes pv-hop{0%,56%,100%{transform:translateY(0)}62%{transform:translateY(-6px)}68%{transform:translateY(0)}}
 @media (prefers-reduced-motion: reduce){.pv-pb,.pv-happy,.pv-arm,.pv-dot,.pv-body{animation:none}.pv-happy{opacity:0}}
