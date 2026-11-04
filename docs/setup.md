@@ -1,11 +1,11 @@
 # 로컬 세팅
 
 ```
-app/       React Native (Expo)
-backend/   Spring Boot  :8080
 ai/        FastAPI      :8000
 db         Postgres + pgvector :5432 (docker)
 ```
+
+Spring 백엔드(:8080)와 Expo 앱은 [pibot-app](https://github.com/pibot-team/pibot-app) 레포에서 관리한다.
 
 서버끼리 주고받는 형식은 [docs/api](api/README.md) 참고.
 
@@ -23,7 +23,7 @@ cp .env.example .env    # 받은 API 키 채우기 (.env는 git에 안 올라감
 docker compose up --build
 ```
 
-db와 ai가 뜬다. backend는 Spring 세팅 후 `docker-compose.yml`에서 주석을 풀면 같이 뜬다.
+db와 ai가 뜬다. backend는 자기 레포에서 띄우고 `localhost:5432`로 같은 db에 붙는다.
 
 ## ai 서버만 직접 띄우기
 
@@ -48,10 +48,6 @@ ruff check .
 ```
 
 PR을 올리면 CI에서 같은 걸 돌린다. 둘 다 통과해야 머지할 수 있다.
-
-## backend
-
-[backend/README.md](../backend/README.md) 참고.
 
 ## 제주 데이터 빈 값 확인
 

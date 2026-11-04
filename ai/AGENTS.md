@@ -5,7 +5,7 @@ Pibot AI 서버. FastAPI + LangGraph. 담당 Gwakgarin.
 ## 작업 범위
 
 - ai/, docs/ 만 고친다
-- backend/, app/ 은 sonyeseul63 담당. 읽기만 하고 고치지 않는다
+- Spring 백엔드와 앱은 pibot-app 레포, sonyeseul63 담당
 - docs/api/*.json 은 직접 고치지 않는다. scripts/export_openapi.py 로 만든다
 - app/schemas/ 를 바꾸는 PR은 sonyeseul63 에게 리뷰 요청
 
