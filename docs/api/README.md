@@ -15,6 +15,8 @@ ai (FastAPI, :8000)
 
 앱 ↔ backend 사이 API는 backend 쪽에서 따로 정한다.
 
+서버 간 명세의 원본은 이 레포다. backend 레포는 여기 JSON을 보고 맞춘다.
+
 ## 규칙
 
 - 요청·응답은 JSON. 날짜는 `2026-11-03`, 시각은 `13:30`, 일시는 `2026-11-03T13:30:00` (한국 시간)
@@ -35,7 +37,7 @@ source .venv/bin/activate
 python scripts/export_openapi.py
 ```
 
-결과 JSON까지 같이 커밋한다. 코드와 JSON이 다르면 CI가 실패한다.
+결과 JSON까지 같이 커밋한다. 코드와 JSON이 다르면 CI가 실패한다. 명세가 바뀌는 PR은 sonyeseul63 에게 리뷰를 요청한다.
 
 ## Spring에서 쓰기
 
