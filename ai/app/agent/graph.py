@@ -47,12 +47,13 @@ class PlanState(TypedDict):
     trip: Trip | None
     violations: list[Violation]
     attempts: int
+    free_only: bool  # 예산 넘은 뒤로는 무료 장소로만 다시 채운다
 
 
 def build_planning_graph(tools: MockToolbox):
     places = tools.all_places()
 
-    def candidates(req, area, used, excluded, meal):
+    def candidates(req, area, used, excluded, meal, free_only=False):
         query = " ".join(req.preferences)
         hits = search_places(t.SearchPlacesIn(query=query, limit=len(places)), places).hits
         return [
@@ -60,6 +61,7 @@ def build_planning_graph(tools: MockToolbox):
             if area_of(h.place) == area
             and h.place.id not in used | excluded
             and (h.place.category in MEAL_CATEGORIES) == meal
+            and not (free_only and h.place.fee)
         ]
 
     def select(state: PlanState) -> dict:
@@ -73,7 +75,9 @@ def build_planning_graph(tools: MockToolbox):
             day = [p for p in picks.get(date, []) if p.id not in excluded]
             sights = [p for p in day if p.category not in MEAL_CATEGORIES]
             meals = [p for p in day if p.category in MEAL_CATEGORIES]
-            for p in candidates(req, area, used, excluded, meal=False)[: n - len(sights)]:
+            more = candidates(req, area, used, excluded, meal=False,
+                              free_only=state["free_only"])
+            for p in more[: n - len(sights)]:
                 sights.append(p)
                 used.add(p.id)
             if not meals:
@@ -111,17 +115,28 @@ def build_planning_graph(tools: MockToolbox):
     def fix(state: PlanState) -> dict:
         excluded = set(state["excluded"])
         picks = dict(state["picks"])
+        free_only = state["free_only"]
         for v in state["violations"]:
             if v.severity != "error":
                 continue
             if v.stop_id:
                 excluded.add(v.stop_id)
             elif v.type == "budget":
-                pricey = max((p for ps in picks.values() for p in ps),
-                             key=lambda p: p.fee or 0)
-                excluded.add(pricey.id)
+                free_only = True
+                # 식당은 구역마다 하나뿐이라 빼면 점심을 다시 못 채움. 식당 말고 비싼 곳을 뺀다
+                chosen = [p for ps in picks.values() for p in ps]
+                over = sum(p.fee or 0 for p in chosen) - state["req"].budget
+                paid = sorted((p for p in chosen
+                               if p.category not in MEAL_CATEGORIES and (p.fee or 0) > 0),
+                              key=lambda p: p.fee, reverse=True)
+                for p in paid:
+                    if over <= 0:
+                        break
+                    excluded.add(p.id)
+                    over -= p.fee
         picks = {d: [p for p in ps if p.id not in excluded] for d, ps in picks.items()}
-        return {"picks": picks, "excluded": excluded, "attempts": state["attempts"] + 1}
+        return {"picks": picks, "excluded": excluded, "free_only": free_only,
+                "attempts": state["attempts"] + 1}
 
     def route(state: PlanState) -> str:
         errors = [v for v in state["violations"] if v.severity == "error"]
@@ -146,7 +161,7 @@ def run_planning(req: t.TripRequest, tools: MockToolbox) -> t.PlanTripOut:
     graph = build_planning_graph(tools)
     state = graph.invoke({
         "req": req, "picks": {}, "excluded": set(), "trip": None,
-        "violations": [], "attempts": 0,
+        "violations": [], "attempts": 0, "free_only": False,
     })
     return t.PlanTripOut(trip=state["trip"], violations=state["violations"])
 
