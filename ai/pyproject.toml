@@ -15,6 +15,11 @@ agent = [
     "langgraph>=0.2",
     "anthropic>=0.40",
 ]
+db = [
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.1",
+    "alembic>=1.13",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.5",
