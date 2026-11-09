@@ -25,6 +25,17 @@ docker compose up --build
 
 db와 ai가 뜬다. backend는 자기 레포에서 띄우고 `localhost:5432`로 같은 db에 붙는다.
 
+## DB 테이블 만들기
+
+`places`, `place_search`는 ai 쪽 Alembic으로 관리한다. Spring 쪽 테이블은 Flyway가 맡는다.
+
+```bash
+docker compose up -d db
+cd ai
+pip install -e ".[db]"
+alembic upgrade head
+```
+
 ## ai 서버만 직접 띄우기
 
 Python 3.11 이상.
