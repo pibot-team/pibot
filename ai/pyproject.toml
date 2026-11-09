@@ -20,6 +20,11 @@ db = [
     "psycopg[binary]>=3.1",
     "alembic>=1.13",
 ]
+# 영업시간 파서 비교용 (eval/hours)
+eval = [
+    "anthropic>=1.0",
+    "google-genai>=3.0",
+]
 dev = [
     "pytest>=8.0",
     "ruff>=0.5",
