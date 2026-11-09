@@ -45,6 +45,7 @@ cd ai
 python3 -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"      # 에이전트까지 쓰면 ".[dev,agent]"
+                             # 영업시간 파서 비교까지 하면 ".[dev,db,eval]"
 uvicorn app.main:app --reload
 ```
 
@@ -80,6 +81,7 @@ python ../data/scripts/collect_tourapi.py
 | `VISITJEJU_API_KEY` | 비짓제주 오픈API (api.visitjeju.net) | ai |
 | `KAKAO_REST_API_KEY` | 카카오 개발자 - 내 애플리케이션 - REST API 키 | backend |
 | `ANTHROPIC_API_KEY` | Anthropic Console. 월 사용 한도 걸어 두기 | ai |
+| `GEMINI_API_KEY` | Google AI Studio - Get API key. 영업시간 파서 비교용 | ai |
 | `INTERNAL_API_KEY` | 아무 긴 문자열. 둘이 같은 값 | backend, ai |
 
 키는 단톡방이나 코드에 붙이지 말고 각자 `.env`에만 둔다.

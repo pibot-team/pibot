@@ -29,3 +29,6 @@ data/processed/
 .idea/
 .vscode/
 eval/results/
+
+# 파서 실행 결과 (원문 문장 포함)
+eval/hours/runs/
