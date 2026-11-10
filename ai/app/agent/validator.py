@@ -6,10 +6,13 @@ LLM 없이 코드로만 검사한다. Planner가 만든 일정이든 여행 중 
 
 from datetime import time
 
+from app.hours.calendar import closure_on, hours_on
 from app.schemas.itinerary import Day, TravelMode, Trip, Violation
 
 MEAL_CATEGORIES = {"음식점", "시장"}
 LUNCH_FROM, LUNCH_TO = time(11, 0), time(14, 30)
+# 조기 마감 안내가 있는 곳은 닫기 이 시간 안쪽 방문이면 경고
+EARLY_CLOSE_MARGIN = 120
 
 
 def _minutes(t: time) -> int:
@@ -32,7 +35,6 @@ def _has_lunch(day: Day) -> bool:
 def check_day(day: Day, rainy_hours: set[int] | None = None,
               mode: TravelMode = "car") -> list[Violation]:
     violations: list[Violation] = []
-    weekday = day.date.weekday()
 
     for i, stop in enumerate(day.stops):
         place = stop.place
@@ -48,33 +50,58 @@ def check_day(day: Day, rainy_hours: set[int] | None = None,
                 message=f"{day.stops[i - 1].place.name}과(와) {place.name} 시간이 겹침",
             ))
 
-        if weekday in place.closed_weekdays:
+        closure = closure_on(place.closed_weekdays, place.other_closures, day.date)
+        today = hours_on(place.hours, day.date)
+        if closure:
+            violations.append(Violation(
+                type="closed_day", severity="error" if closure.certain else "warning",
+                date=day.date, stop_id=stop.id,
+                message=f"{place.name}은(는) 이날 쉼 ({closure.reason})",
+            ))
+        elif today is False:
             violations.append(Violation(
                 type="closed_day", date=day.date, stop_id=stop.id,
-                message=f"{place.name}은(는) 이날 휴무",
+                message=f"{place.name}은(는) 이날 영업하지 않음",
             ))
-
-        if place.hours is None:
+        elif today is None:
             violations.append(Violation(
                 type="hours_unknown", severity="warning", date=day.date, stop_id=stop.id,
                 message=f"{place.name} 영업시간 미확인",
             ))
-        elif stop.start < place.hours.open or stop.end > place.hours.close:
-            violations.append(Violation(
-                type="outside_hours", date=day.date, stop_id=stop.id,
-                message=(
-                    f"{place.name} 영업시간({place.hours.open:%H:%M}~{place.hours.close:%H:%M}) "
-                    f"밖에 방문"
-                ),
-            ))
-
-        if rainy_hours and place.indoor == "outdoor":
-            stay = range(stop.start.hour, max(stop.end.hour, stop.start.hour + 1))
-            if any(h in rainy_hours for h in stay):
+        else:
+            if not today.contains(stop.start, stop.end):
                 violations.append(Violation(
-                    type="rain_outdoor", date=day.date, stop_id=stop.id,
-                    message=f"{place.name}은(는) 실외인데 비 예보 시간대",
+                    type="outside_hours", date=day.date, stop_id=stop.id,
+                    message=(
+                        f"{place.name} 영업시간({today.open:%H:%M}~{today.close:%H:%M}) "
+                        f"밖에 방문"
+                    ),
                 ))
+            elif today.last_entry and stop.start > today.last_entry:
+                violations.append(Violation(
+                    type="last_entry", date=day.date, stop_id=stop.id,
+                    message=f"{place.name} 입장·주문 마감({today.last_entry:%H:%M}) 뒤에 도착",
+                ))
+            if (any(n.type == "조기 마감" for n in place.notices)
+                    and _minutes(today.close) - _minutes(stop.start) < EARLY_CLOSE_MARGIN):
+                violations.append(Violation(
+                    type="notice", severity="warning", date=day.date, stop_id=stop.id,
+                    message=f"{place.name}은(는) 일찍 닫을 수 있어서 늦은 방문은 위험",
+                ))
+
+        stay = range(stop.start.hour, max(stop.end.hour, stop.start.hour + 1))
+        raining = bool(rainy_hours) and any(h in rainy_hours for h in stay)
+        if raining and place.indoor == "outdoor":
+            violations.append(Violation(
+                type="rain_outdoor", date=day.date, stop_id=stop.id,
+                message=f"{place.name}은(는) 실외인데 비 예보 시간대",
+            ))
+        weather = next((n for n in place.notices if n.type == "날씨"), None)
+        if raining and weather:
+            violations.append(Violation(
+                type="notice", severity="warning", date=day.date, stop_id=stop.id,
+                message=f"{place.name} 비 예보: {weather.text}",
+            ))
 
         if mode == "car" and place.parking is False:
             violations.append(Violation(

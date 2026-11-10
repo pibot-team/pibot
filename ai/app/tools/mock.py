@@ -3,6 +3,7 @@
 import datetime as dt
 import math
 
+from app.hours.calendar import closure_on, hours_on
 from app.sample import load_places, place_by_id
 from app.schemas import tools as t
 from app.schemas.itinerary import Day, Leg, Place, Stop
@@ -38,9 +39,12 @@ def _add(time: dt.time, minutes: int) -> dt.time:
 
 
 class MockToolbox:
-    def __init__(self, rain: dict[str, set[int]] | None = None):
+    def __init__(self, rain: dict[str, set[int]] | None = None,
+                 places: tuple[Place, ...] | None = None):
         # 예: {"west": {14, 15, 16}} -> 서쪽에 14~16시 비
         self.rain = rain or {}
+        # 없으면 샘플. 테스트는 항상 샘플로 돈다
+        self.places = places
 
     def get_travel_time(self, req: t.TravelTimeIn) -> t.TravelTimeOut:
         km = haversine_km(req.origin, req.dest) * ROAD_FACTOR
@@ -97,12 +101,19 @@ class MockToolbox:
             pos, now = _point(rs.place), end
 
         def fits(rs: t.RouteStop) -> tuple[dt.time, int] | None:
+            if closure_on(rs.place.closed_weekdays, rs.place.other_closures, req.date):
+                return None
+            today = hours_on(rs.place.hours, req.date)
+            if today is False:
+                return None
             travel = self.travel_minutes(pos, rs.place, req.mode) if stops else 0
             start = _add(now, travel)
-            if rs.place.hours and start < rs.place.hours.open:
-                start = rs.place.hours.open
+            if today and start < today.open:
+                start = today.open
             end = _add(start, rs.stay_minutes)
-            if end > DAY_END or (rs.place.hours and end > rs.place.hours.close):
+            if end > DAY_END or (today and not today.contains(start, end)):
+                return None
+            if today and today.last_entry and start > today.last_entry:
                 return None
             if fixed:
                 nxt = fixed[0]
@@ -131,7 +142,7 @@ class MockToolbox:
         )
 
     def all_places(self) -> tuple[Place, ...]:
-        return load_places()
+        return self.places or load_places()
 
 
 def stay_minutes(place: Place) -> int:
