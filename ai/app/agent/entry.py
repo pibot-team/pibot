@@ -2,13 +2,14 @@
 
 from app.agent import gap, graph, search
 from app.agent.validator import check_trip
+from app.places import all_places
 from app.schemas import tools as t
 from app.tools.mock import MockToolbox
 
 
 def default_tools() -> MockToolbox:
     # Spring 도구가 준비되면 HTTP로 호출하는 구현으로 바꾼다
-    return MockToolbox()
+    return MockToolbox(places=all_places())
 
 
 def plan_trip(req: t.TripRequest, tools: MockToolbox | None = None) -> t.PlanTripOut:
@@ -24,7 +25,7 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox | None = None) -> t.FillGapOut
 
 
 def search_places(req: t.SearchPlacesIn) -> t.SearchPlacesOut:
-    return search.search_places(req)
+    return search.search_places(req, all_places())
 
 
 def validate_trip(req: t.ValidateTripIn) -> t.ValidateTripOut:

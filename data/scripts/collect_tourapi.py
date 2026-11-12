@@ -12,23 +12,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "ai"))
 
-from app.tools.tourapi import JEJU_AREA_CODE, area_based_list
+from app.tools.tourapi import JEJU_LDONG_REGN_CD, area_based_list, items_of
 
 OUT = Path(__file__).resolve().parents[1] / "raw" / "jeju_places.json"
-
-
-def items_of(res: dict) -> list[dict]:
-    items = res["response"]["body"]["items"]
-    if not items:
-        return []
-    item = items["item"]
-    return item if isinstance(item, list) else [item]
 
 
 async def main():
     places, page = [], 1
     while True:
-        batch = items_of(await area_based_list(JEJU_AREA_CODE, page=page, rows=100))
+        batch = items_of(await area_based_list(JEJU_LDONG_REGN_CD, page=page, rows=100))
         if not batch:
             break
         places += batch

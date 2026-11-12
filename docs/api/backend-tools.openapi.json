@@ -275,6 +275,91 @@
         ],
         "title": "HourlyWeather"
       },
+      "Hours": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "known",
+              "always",
+              "unknown"
+            ],
+            "title": "Status"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/HoursRule"
+            },
+            "type": "array",
+            "title": "Rules"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "Hours"
+      },
+      "HoursRule": {
+        "properties": {
+          "months": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Months"
+          },
+          "weekdays": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekdays"
+          },
+          "open": {
+            "type": "string",
+            "format": "time",
+            "title": "Open"
+          },
+          "close": {
+            "type": "string",
+            "format": "time",
+            "title": "Close"
+          },
+          "last_entry": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Entry"
+          }
+        },
+        "type": "object",
+        "required": [
+          "open",
+          "close"
+        ],
+        "title": "HoursRule"
+      },
       "LatLng": {
         "properties": {
           "lat": {
@@ -317,25 +402,30 @@
         "title": "Leg",
         "description": "stops[i] -> stops[i + 1] 이동."
       },
-      "OpeningHours": {
+      "Notice": {
         "properties": {
-          "open": {
+          "type": {
             "type": "string",
-            "format": "time",
-            "title": "Open"
+            "enum": [
+              "날씨",
+              "조기 마감",
+              "교통·예약",
+              "변동 가능",
+              "기타"
+            ],
+            "title": "Type"
           },
-          "close": {
+          "text": {
             "type": "string",
-            "format": "time",
-            "title": "Close"
+            "title": "Text"
           }
         },
         "type": "object",
         "required": [
-          "open",
-          "close"
+          "type",
+          "text"
         ],
-        "title": "OpeningHours"
+        "title": "Notice"
       },
       "OptimizeRouteIn": {
         "properties": {
@@ -552,7 +642,7 @@
           "hours": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/OpeningHours"
+                "$ref": "#/components/schemas/Hours"
               },
               {
                 "type": "null"
@@ -560,11 +650,32 @@
             ]
           },
           "closed_weekdays": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed Weekdays"
+          },
+          "other_closures": {
             "items": {
-              "type": "integer"
+              "type": "string"
             },
             "type": "array",
-            "title": "Closed Weekdays"
+            "title": "Other Closures"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/Notice"
+            },
+            "type": "array",
+            "title": "Notices"
           },
           "parking": {
             "anyOf": [
@@ -670,7 +781,7 @@
           "hours": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/OpeningHours"
+                "$ref": "#/components/schemas/Hours"
               },
               {
                 "type": "null"
@@ -678,11 +789,32 @@
             ]
           },
           "closed_weekdays": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closed Weekdays"
+          },
+          "other_closures": {
             "items": {
-              "type": "integer"
+              "type": "string"
             },
             "type": "array",
-            "title": "Closed Weekdays"
+            "title": "Other Closures"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/Notice"
+            },
+            "type": "array",
+            "title": "Notices"
           },
           "parking": {
             "anyOf": [

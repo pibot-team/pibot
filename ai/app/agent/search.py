@@ -2,6 +2,7 @@
 
 import datetime as dt
 
+from app.hours.calendar import closure_on, hours_on
 from app.sample import load_places
 from app.schemas import tools as t
 from app.schemas.itinerary import Place
@@ -9,11 +10,15 @@ from app.tools.mock import haversine_km
 
 
 def is_open(place: Place, at: dt.datetime) -> bool:
-    if at.weekday() in place.closed_weekdays:
+    """그 시각에 여는지. 영업시간을 모르면 연다고 본다 (검사기가 경고로 알린다)."""
+    if closure_on(place.closed_weekdays, place.other_closures, at.date()):
         return False
-    if place.hours is None:
+    today = hours_on(place.hours, at.date())
+    if today is False:
+        return False
+    if today is None:
         return True
-    return place.hours.open <= at.time() <= place.hours.close
+    return today.contains(at.time(), at.time())
 
 
 def _score(place: Place, words: list[str]) -> float:

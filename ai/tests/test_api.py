@@ -13,10 +13,10 @@ TRIP = {
         "stops": [
             {"id": "a", "start": "10:00", "end": "11:00",
              "place": {"id": "a", "name": "A", "lat": 33.5, "lng": 126.5,
-                       "hours": {"open": "09:00", "close": "18:00"}}},
+                       "hours": {"status": "known", "rules": [{"open": "09:00", "close": "18:00"}]}}},
             {"id": "b", "start": "11:10", "end": "12:00",
              "place": {"id": "b", "name": "B", "lat": 33.4, "lng": 126.9,
-                       "hours": {"open": "09:00", "close": "18:00"}}},
+                       "hours": {"status": "known", "rules": [{"open": "09:00", "close": "18:00"}]}}},
         ],
         "legs": [{"minutes": 60}],
     }],
