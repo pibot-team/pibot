@@ -55,3 +55,13 @@ def test_too_little_time_gives_nothing():
 def test_preference_comes_first():
     out = ask(90, preferences=["카페"])
     assert "카페" in out.suggestions[0].place.tags
+
+
+def test_current_place_not_suggested():
+    seongsan = place_by_id("jeju-001")
+    here = t.LatLng(lat=seongsan.lat, lng=seongsan.lng)
+    req = t.FillGapIn(location=here, now=dt.datetime(2026, 11, 5, 10, 30),
+                      until=dt.datetime(2026, 11, 5, 12, 30))
+    out = fill_gap(req, MockToolbox())
+    assert out.suggestions
+    assert all(s.place.id != "jeju-001" for s in out.suggestions)
