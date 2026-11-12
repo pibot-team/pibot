@@ -1,7 +1,8 @@
 from datetime import date, time
 
 from app.agent.validator import check_day, check_trip
-from app.schemas.itinerary import Day, Leg, OpeningHours, Place, Stop, Trip
+from app.hours.model import Hours, HoursRule
+from app.schemas.itinerary import Day, Leg, Place, Stop, Trip
 
 # 2026-11-03 = 화요일
 TUE = date(2026, 11, 3)
@@ -9,7 +10,7 @@ TUE = date(2026, 11, 3)
 
 def place(pid, **kw):
     base = {"id": pid, "name": pid, "lat": 33.5, "lng": 126.5,
-            "hours": OpeningHours(open=time(9), close=time(18))}
+            "hours": Hours(status="known", rules=[HoursRule(open=time(9), close=time(18))])}
     return Place(**(base | kw))
 
 

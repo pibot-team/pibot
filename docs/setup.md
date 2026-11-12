@@ -1,11 +1,11 @@
 # 로컬 세팅
 
 ```
-app/       React Native (Expo)
-backend/   Spring Boot  :8080
 ai/        FastAPI      :8000
 db         Postgres + pgvector :5432 (docker)
 ```
+
+Spring 백엔드(:8080)와 Expo 앱은 [pibot-app](https://github.com/pibot-team/pibot-app) 레포에서 관리한다.
 
 서버끼리 주고받는 형식은 [docs/api](api/README.md) 참고.
 
@@ -23,7 +23,18 @@ cp .env.example .env    # 받은 API 키 채우기 (.env는 git에 안 올라감
 docker compose up --build
 ```
 
-db와 ai가 뜬다. backend는 Spring 세팅 후 `docker-compose.yml`에서 주석을 풀면 같이 뜬다.
+db와 ai가 뜬다. backend는 자기 레포에서 띄우고 `localhost:5432`로 같은 db에 붙는다.
+
+## DB 테이블 만들기
+
+`places`, `place_search`는 ai 쪽 Alembic으로 관리한다. Spring 쪽 테이블은 Flyway가 맡는다.
+
+```bash
+docker compose up -d db
+cd ai
+pip install -e ".[db]"
+alembic upgrade head
+```
 
 ## ai 서버만 직접 띄우기
 
@@ -34,6 +45,7 @@ cd ai
 python3 -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"      # 에이전트까지 쓰면 ".[dev,agent]"
+                             # 영업시간 파서 비교까지 하면 ".[dev,db,eval]"
 uvicorn app.main:app --reload
 ```
 
@@ -49,13 +61,9 @@ ruff check .
 
 PR을 올리면 CI에서 같은 걸 돌린다. 둘 다 통과해야 머지할 수 있다.
 
-## backend
-
-[backend/README.md](../backend/README.md) 참고.
-
 ## 제주 데이터 빈 값 확인
 
-`.env`에 `TOUR_API_KEY`를 넣은 뒤:
+`.env`에 `DATA_GO_KR_KEY`를 넣은 뒤:
 
 ```bash
 cd ai
@@ -69,10 +77,11 @@ python ../data/scripts/collect_tourapi.py
 
 | 변수 | 어디서 | 쓰는 곳 |
 | --- | --- | --- |
-| `TOUR_API_KEY` | 공공데이터포털 - 한국관광공사 국문 관광정보 서비스 | backend, ai(빈 값 확인) |
-| `KMA_API_KEY` | 공공데이터포털 - 기상청 단기예보 조회서비스 | backend |
+| `DATA_GO_KR_KEY` | 공공데이터포털 마이페이지 - 일반 인증키. 관광정보·단기예보·출몰시각을 각각 활용신청하면 이 키 하나로 호출 | backend, ai(빈 값 확인) |
+| `VISITJEJU_API_KEY` | 비짓제주 오픈API (api.visitjeju.net) | ai |
 | `KAKAO_REST_API_KEY` | 카카오 개발자 - 내 애플리케이션 - REST API 키 | backend |
-| `ANTHROPIC_API_KEY` | Anthropic Console | ai |
+| `ANTHROPIC_API_KEY` | Anthropic Console. 월 사용 한도 걸어 두기 | ai |
+| `GEMINI_API_KEY` | Google AI Studio - Get API key. 영업시간 파서 비교용 | ai |
 | `INTERNAL_API_KEY` | 아무 긴 문자열. 둘이 같은 값 | backend, ai |
 
 키는 단톡방이나 코드에 붙이지 말고 각자 `.env`에만 둔다.
