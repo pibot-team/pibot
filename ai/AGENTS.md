@@ -47,7 +47,7 @@ tests/
 
 - 브랜치: feat/ fix/ data/ docs/ chore/ + 짧은 설명
 - main 에 직접 push 하지 않는다. PR → CI 통과 → squash merge
-- 커밋 메시지는 한국어로 짧게. 사람이 쓴 것처럼, Co-Authored-By 같은 표시는 넣지 않는다
+- 커밋 메시지는 한국어로 짧게. Co-Authored-By 같은 표시는 넣지 않는다
 - 커밋 메일은 레포 설정(noreply) 그대로 쓴다
 - 키·토큰은 .env 에만 둔다. 코드나 문서에 넣지 않는다
 - force push, 히스토리 수정 금지
