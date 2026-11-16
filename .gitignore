@@ -32,3 +32,6 @@ eval/results/
 
 # 파서 실행 결과 (원문 문장 포함)
 eval/hours/runs/
+
+# 임베딩 캐시와 평가 결과
+eval/rag/runs/
