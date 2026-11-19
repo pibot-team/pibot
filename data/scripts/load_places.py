@@ -29,7 +29,7 @@ from app.tools.tourapi import (
 )
 
 COLUMNS = [
-    "id", "tourapi_id", "name", "category", "cat3", "lat", "lng", "address", "phone",
+    "tourapi_id", "name", "category", "cat3", "lat", "lng", "address", "phone",
     "image_url", "overview", "hours_text", "rest_text", "parking_text", "fee_text", "raw",
     "source_modified_at",
 ]
@@ -37,8 +37,8 @@ COLUMNS = [
 UPSERT = f"""
 INSERT INTO places ({", ".join(COLUMNS)})
 VALUES ({", ".join(f"%({c})s" for c in COLUMNS)})
-ON CONFLICT (id) DO UPDATE SET
-    {", ".join(f"{c} = EXCLUDED.{c}" for c in COLUMNS if c != "id")},
+ON CONFLICT (tourapi_id) DO UPDATE SET
+    {", ".join(f"{c} = EXCLUDED.{c}" for c in COLUMNS if c != "tourapi_id")},
     updated_at = now()
 """
 

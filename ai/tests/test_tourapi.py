@@ -19,7 +19,8 @@ def test_place_row_picks_intro_fields_by_type():
     intro = {"opentimefood": "11:00~20:00", "restdatefood": "매주 화요일",
              "parkingfood": "가능"}
     row = place_row(ITEM, {"overview": "바다 앞<br>식당"}, intro)
-    assert row["id"] == "tour:123"
+    assert "id" not in row
+    assert row["tourapi_id"] == "123"
     assert row["category"] == "음식점"
     assert (row["lat"], row["lng"]) == (33.5, 126.5)
     assert row["hours_text"] == "11:00~20:00"
