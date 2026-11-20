@@ -111,7 +111,6 @@ def place_row(item: dict, common: dict | None, intro: dict | None) -> dict:
         return clean_text(intro.get(name)) if name else None
 
     return {
-        "id": f"tour:{item['contentid']}",
         "tourapi_id": item["contentid"],
         "name": item["title"],
         "category": CONTENT_TYPES[type_id],

@@ -2,6 +2,7 @@
 
     cd ai && python ../data/scripts/parse_places.py            # 아직 안 한 곳만
     cd ai && python ../data/scripts/parse_places.py --all      # 전부 다시
+    cd ai && python ../data/scripts/parse_places.py --limit 50 # 시험으로 50곳만
 
 기본은 Claude Haiku 5.5 (eval/hours 시험용에서 가장 정확). 실패하면 규칙 파서 결과를 넣는다.
 """
@@ -56,12 +57,13 @@ def parse_one(row: tuple) -> dict:
     }
 
 
-def main(redo: bool, workers: int):
+def main(redo: bool, workers: int, limit: int | None):
     with psycopg.connect(settings.database_url) as conn:
         rows = conn.execute(
             "SELECT id, hours_text, rest_text FROM places"
             " WHERE (hours_text IS NOT NULL OR rest_text IS NOT NULL)"
             + ("" if redo else " AND parsed_by IS NULL")
+            + (f" ORDER BY id LIMIT {int(limit)}" if limit else "")
         ).fetchall()
         print(f"{len(rows)}곳 파싱")
         with ThreadPoolExecutor(workers) as pool:
@@ -79,5 +81,6 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--all", action="store_true", help="이미 파싱한 곳도 다시")
     p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--limit", type=int, help="시험용으로 이 곳 수만")
     a = p.parse_args()
-    main(a.all, a.workers)
+    main(a.all, a.workers, a.limit)
