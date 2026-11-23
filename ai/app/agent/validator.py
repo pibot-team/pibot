@@ -6,7 +6,7 @@ LLM 없이 코드로만 검사한다. Planner가 만든 일정이든 여행 중 
 
 from datetime import time
 
-from app.hours.calendar import closure_on, hours_on
+from app.hours.calendar import HOURS_UNKNOWN, closure_on, hours_on
 from app.schemas.itinerary import Day, TravelMode, Trip, Violation
 
 MEAL_CATEGORIES = {"음식점", "시장"}
@@ -66,7 +66,7 @@ def check_day(day: Day, rainy_hours: set[int] | None = None,
         elif today is None:
             violations.append(Violation(
                 type="hours_unknown", severity="warning", date=day.date, stop_id=stop.id,
-                message=f"{place.name} 영업시간 미확인",
+                message=f"{place.name} {HOURS_UNKNOWN}",
             ))
         else:
             if not today.contains(stop.start, stop.end):

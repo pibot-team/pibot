@@ -15,6 +15,12 @@ agent = [
     "langgraph>=0.2",
     "anthropic>=0.40",
 ]
+# DB 장소 불러오기와 벡터 검색 (배포 서버에도 필요)
+rag = [
+    "numpy>=1.26",
+    "psycopg[binary]>=3.1",
+    "google-genai>=3.0",
+]
 db = [
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3.1",

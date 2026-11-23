@@ -60,8 +60,23 @@ def test_preference_comes_first():
 def test_current_place_not_suggested():
     seongsan = place_by_id("jeju-001")
     here = t.LatLng(lat=seongsan.lat, lng=seongsan.lng)
+    # 지금 있는 곳은 앱이 exclude_ids 로 보낸다 (#44)
     req = t.FillGapIn(location=here, now=dt.datetime(2026, 11, 5, 10, 30),
-                      until=dt.datetime(2026, 11, 5, 12, 30))
+                      until=dt.datetime(2026, 11, 5, 12, 30), exclude_ids=["jeju-001"])
     out = fill_gap(req, MockToolbox())
     assert out.suggestions
     assert all(s.place.id != "jeju-001" for s in out.suggestions)
+
+
+def test_unknown_hours_goes_after_known_with_warning():
+    seongsan = place_by_id("jeju-001")
+    here = t.LatLng(lat=seongsan.lat, lng=seongsan.lng)
+    known = [p for p in MockToolbox().all_places() if p.category != "음식점"][:6]
+    unknown = [p.model_copy(update={"id": p.id + "-u", "hours": None}) for p in known]
+    tools = MockToolbox(places=tuple(unknown + known))
+    req = t.FillGapIn(location=here, now=dt.datetime(2026, 11, 5, 10, 30),
+                      until=dt.datetime(2026, 11, 5, 14, 30))
+    out = fill_gap(req, tools)
+    first = out.suggestions[0]
+    assert not first.place.id.endswith("-u") and first.warnings == []
+    assert all(s.warnings for s in out.suggestions if s.place.id.endswith("-u"))

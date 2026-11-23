@@ -11,6 +11,8 @@ from app.hours import holidays
 from app.hours.model import WEEKDAYS, Hours
 
 ALL_DAY = (dt.time(0, 0), dt.time(23, 59))
+# 검색·추천·일정 검사에서 같은 문구로 쓴다
+HOURS_UNKNOWN = "영업시간 미확인, 방문 전에 확인 필요"
 
 
 @dataclass(frozen=True)
