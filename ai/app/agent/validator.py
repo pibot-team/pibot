@@ -6,6 +6,7 @@ LLM 없이 코드로만 검사한다. Planner가 만든 일정이든 여행 중 
 
 from datetime import time
 
+from app.agent.rain import rain_warning
 from app.hours.calendar import HOURS_UNKNOWN, closure_on, hours_on
 from app.schemas.itinerary import Day, TravelMode, Trip, Violation
 
@@ -95,6 +96,11 @@ def check_day(day: Day, rainy_hours: set[int] | None = None,
             violations.append(Violation(
                 type="rain_outdoor", date=day.date, stop_id=stop.id,
                 message=f"{place.name}은(는) 실외인데 비 예보 시간대",
+            ))
+        elif raining and (warning := rain_warning(place.indoor)):
+            violations.append(Violation(
+                type="rain_outdoor", severity="warning", date=day.date, stop_id=stop.id,
+                message=f"{place.name} 비 예보: {warning}",
             ))
         weather = next((n for n in place.notices if n.type == "날씨"), None)
         if raining and weather:
