@@ -53,7 +53,9 @@ class MockToolbox:
         minutes = math.ceil(km / SPEED_KMH[req.mode] * 60) + PARKING_MINUTES[req.mode]
         return t.TravelTimeOut(minutes=minutes, distance_km=round(km, 1), source="estimate")
 
-    def travel_minutes(self, a: Place | t.LatLng, b: Place | t.LatLng, mode="car") -> int:
+    def travel_minutes(self, a: Place | t.LatLng, b: Place | t.LatLng, mode="car",
+                       date: dt.date | None = None, at: dt.time | None = None) -> int:
+        # date·at(출발 시각)은 실제 길찾기용. 가짜 도구는 쓰지 않는다
         a = _point(a) if isinstance(a, Place) else a
         b = _point(b) if isinstance(b, Place) else b
         return self.get_travel_time(t.TravelTimeIn(origin=a, dest=b, mode=mode)).minutes
@@ -106,7 +108,7 @@ class MockToolbox:
             today = hours_on(rs.place.hours, req.date)
             if today is False:
                 return None
-            travel = self.travel_minutes(pos, rs.place, req.mode) if stops else 0
+            travel = self.travel_minutes(pos, rs.place, req.mode, req.date, now) if stops else 0
             start = _add(now, travel)
             if today and start < today.open:
                 start = today.open
@@ -117,7 +119,7 @@ class MockToolbox:
                 return None
             if fixed:
                 nxt = fixed[0]
-                back = self.travel_minutes(rs.place, nxt.place, req.mode)
+                back = self.travel_minutes(rs.place, nxt.place, req.mode, req.date, end)
                 if _add(end, back) > nxt.fixed_start:
                     return None
             return start, travel
@@ -130,7 +132,7 @@ class MockToolbox:
                 visit(rs, start, travel)
             elif fixed:
                 rs = fixed.pop(0)
-                travel = self.travel_minutes(pos, rs.place, req.mode) if stops else 0
+                travel = self.travel_minutes(pos, rs.place, req.mode, req.date, now) if stops else 0
                 visit(rs, max(rs.fixed_start, _add(now, travel)), travel)
             else:
                 break
