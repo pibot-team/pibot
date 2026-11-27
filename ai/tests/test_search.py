@@ -35,3 +35,13 @@ def test_warning_without_open_at_too():
     out = search_places(t.SearchPlacesIn(query="오름", limit=50), (unknown,))
     assert out.hits[0].warnings == [HOURS_UNKNOWN]
 
+
+
+def test_indoor_filter_orders_and_warns():
+    from app.agent.rain import RAIN_MIXED, RAIN_UNKNOWN
+    base = load_places()[0]
+    pool = tuple(base.model_copy(update={"id": v, "indoor": v}) for v in ("unknown", "mixed", "indoor"))
+    out = search_places(t.SearchPlacesIn(query="", indoor=["indoor", "mixed", "unknown"]), pool)
+    assert [h.place.id for h in out.hits] == ["indoor", "mixed", "unknown"]
+    assert RAIN_MIXED in out.hits[1].warnings and RAIN_UNKNOWN in out.hits[2].warnings
+    assert all(RAIN_MIXED not in w and RAIN_UNKNOWN not in w for w in [out.hits[0].warnings])

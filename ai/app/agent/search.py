@@ -2,6 +2,7 @@
 
 import datetime as dt
 
+from app.agent.rain import RAIN_ORDER, rain_warning
 from app.hours.calendar import HOURS_UNKNOWN, closure_on, hours_on
 from app.sample import load_places
 from app.schemas import tools as t
@@ -41,8 +42,13 @@ def filter_and_rank(scored: list[tuple[Place, float]], req: t.SearchPlacesIn) ->
             here = t.LatLng(lat=place.lat, lng=place.lng)
             if haversine_km(req.near, here) > req.radius_km:
                 continue
-        hits.append((opened is None, t.PlaceHit(place=place, score=round(score, 4),
-                                                 warnings=warnings_for(place))))
+        warnings = warnings_for(place)
+        # 실내외 조건이 있다는 건 비 같은 이유로 실내를 찾는 것
+        if req.indoor and (warning := rain_warning(place.indoor)):
+            warnings.append(warning)
+        order = RAIN_ORDER[place.indoor] if req.indoor else 0
+        hits.append(((order, opened is None),
+                     t.PlaceHit(place=place, score=round(score, 4), warnings=warnings)))
 
     hits.sort(key=lambda h: (h[0], -h[1].score))
     return t.SearchPlacesOut(hits=[h for _, h in hits[: req.limit]])

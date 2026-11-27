@@ -2,6 +2,7 @@
 
 import datetime as dt
 
+from app.agent.rain import RAIN_ORDER, rain_warning
 from app.agent.search import is_open, warnings_for
 from app.schemas import tools as t
 from app.tools.mock import MockToolbox, stay_minutes
@@ -45,8 +46,9 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
         unknown = None in opened
 
         match = sum(1 for p in req.preferences if p in " ".join([*place.tags, place.name]))
-        indoor_bonus = 2 if raining and place.indoor in ("indoor", "mixed") else 0
-        score = match * 3 + indoor_bonus - go / 10 - (UNKNOWN_HOURS_PENALTY if unknown else 0)
+        # 비 오면 실내 > 반반 > 모름 순
+        rain_score = 2 - RAIN_ORDER[place.indoor] * 2 if raining else 0
+        score = match * 3 + rain_score - go / 10 - (UNKNOWN_HOURS_PENALTY if unknown else 0)
         slack = available - go - stay - back
         scored.append((score, place, go, stay, slack))
 
@@ -59,6 +61,9 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
             reason += ", 실내라 비 걱정 없음"
         elif raining and place.indoor == "mixed":
             reason += ", 실내 공간 있음"
+        warnings = warnings_for(place)
+        if raining and (warning := rain_warning(place.indoor)):
+            warnings.append(warning)
         suggestions.append(t.GapSuggestion(place=place, travel_minutes=go, stay_minutes=stay,
-                                           reason=reason, warnings=warnings_for(place)))
+                                           reason=reason, warnings=warnings))
     return t.FillGapOut(suggestions=suggestions)

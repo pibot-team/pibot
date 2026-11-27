@@ -86,3 +86,13 @@ def test_validator_last_entry_and_notices():
     assert types(check_day(_day(early, T(12), T(13)))) == []
     rainy = _place(indoor="outdoor", notices=[Notice(type="날씨", text="우천시 휴무")])
     assert types(check_day(_day(rainy, T(11), T(12)), rainy_hours={11})) == ["rain_outdoor", "notice"]
+
+
+def test_rain_mixed_and_unknown_are_warnings():
+    from app.agent.rain import RAIN_MIXED
+    mixed = _place(indoor="mixed")
+    vs = check_day(_day(mixed, T(11), T(12)), rainy_hours={11})
+    assert [(v.type, v.severity) for v in vs] == [("rain_outdoor", "warning")]
+    assert RAIN_MIXED in vs[0].message
+    outdoor = check_day(_day(_place(indoor="outdoor"), T(11), T(12)), rainy_hours={11})
+    assert [(v.type, v.severity) for v in outdoor] == [("rain_outdoor", "error")]
