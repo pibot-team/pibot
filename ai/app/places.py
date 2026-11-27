@@ -7,11 +7,9 @@ from app.hours.model import Hours, Notice
 from app.sample import load_places
 from app.schemas.itinerary import Place
 
-QUERY = """
-SELECT id, name, lat, lng, category, indoor, hours, closed_weekdays, other_closures,
-       notices, parking, typical_stay_minutes, fee, visitjeju_tags
-FROM places
-"""
+COLUMNS = ["id", "name", "lat", "lng", "category", "indoor", "hours", "closed_weekdays",
+           "other_closures", "notices", "parking", "typical_stay_minutes", "fee", "visitjeju_tags"]
+QUERY = f"SELECT {', '.join(COLUMNS)} FROM places"
 
 
 def _row(r: tuple) -> Place:

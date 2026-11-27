@@ -2,16 +2,17 @@
 
 import datetime as dt
 
-from app.agent.search import is_open
+from app.agent.rain import RAIN_ORDER, rain_warning
+from app.agent.search import is_open, warnings_for
 from app.schemas import tools as t
-from app.tools.mock import MockToolbox, haversine_km, stay_minutes
+from app.tools.mock import MockToolbox, stay_minutes
 
 BUFFER_MINUTES = 5
 MIN_STAY = 15
 # 식당 웨이팅 중에 다른 식당을 추천하지 않는다
 SKIP_CATEGORIES = {"음식점"}
-# 이 거리 안의 장소는 지금 있는 곳으로 보고 추천하지 않는다
-HERE_RADIUS_KM = 0.2
+# 영업시간을 모르는 곳은 빼지 않고 이만큼 점수를 깎는다
+UNKNOWN_HOURS_PENALTY = 3
 
 
 def _minutes_between(a: dt.datetime, b: dt.datetime) -> int:
@@ -28,8 +29,6 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
     for place in tools.all_places():
         if place.id in exclude or place.category in SKIP_CATEGORIES:
             continue
-        if haversine_km(req.location, t.LatLng(lat=place.lat, lng=place.lng)) <= HERE_RADIUS_KM:
-            continue
         if raining and place.indoor == "outdoor":
             continue
 
@@ -41,12 +40,15 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
 
         arrive = req.now + dt.timedelta(minutes=go)
         leave = arrive + dt.timedelta(minutes=stay)
-        if not (is_open(place, arrive) and is_open(place, leave)):
+        opened = [is_open(place, arrive), is_open(place, leave)]
+        if False in opened:
             continue
+        unknown = None in opened
 
         match = sum(1 for p in req.preferences if p in " ".join([*place.tags, place.name]))
-        indoor_bonus = 2 if raining and place.indoor in ("indoor", "mixed") else 0
-        score = match * 3 + indoor_bonus - go / 10
+        # 비 오면 실내 > 반반 > 모름 순
+        rain_score = 2 - RAIN_ORDER[place.indoor] * 2 if raining else 0
+        score = match * 3 + rain_score - go / 10 - (UNKNOWN_HOURS_PENALTY if unknown else 0)
         slack = available - go - stay - back
         scored.append((score, place, go, stay, slack))
 
@@ -59,6 +61,9 @@ def fill_gap(req: t.FillGapIn, tools: MockToolbox) -> t.FillGapOut:
             reason += ", 실내라 비 걱정 없음"
         elif raining and place.indoor == "mixed":
             reason += ", 실내 공간 있음"
-        suggestions.append(t.GapSuggestion(place=place, travel_minutes=go,
-                                           stay_minutes=stay, reason=reason))
+        warnings = warnings_for(place)
+        if raining and (warning := rain_warning(place.indoor)):
+            warnings.append(warning)
+        suggestions.append(t.GapSuggestion(place=place, travel_minutes=go, stay_minutes=stay,
+                                           reason=reason, warnings=warnings))
     return t.FillGapOut(suggestions=suggestions)

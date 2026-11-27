@@ -35,3 +35,5 @@ eval/hours/runs/
 
 # 임베딩 캐시와 평가 결과
 eval/rag/runs/
+eval/indoor/runs/
+eval/baseline/runs/

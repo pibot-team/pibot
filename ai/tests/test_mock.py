@@ -55,6 +55,25 @@ def test_route_keeps_fixed_lunch_time():
         assert before.end <= after.start
 
 
+def test_route_asks_travel_time_with_departure():
+    # 실제 길찾기로 바꿔 끼울 수 있게 날짜와 출발 시각(앞 장소 끝)을 넘긴다
+    asked = []
+
+    class Recording(MockToolbox):
+        def travel_minutes(self, a, b, mode="car", date=None, at=None):
+            asked.append((date, at))
+            return super().travel_minutes(a, b, mode, date, at)
+
+    out = Recording().optimize_route(t.OptimizeRouteIn(
+        date=DAY, start_at=dt.time(9, 30), stops=[stop("jeju-013"), stop("jeju-014")],
+    ))
+    assert asked and all(d == DAY and at is not None for d, at in asked)
+    first = out.day.stops[0]
+    assert (DAY, first.end) in asked
+    assert MockToolbox().travel_minutes(JEJU_CITY, SEOGWIPO, date=DAY, at=dt.time(9)) == \
+        MockToolbox().travel_minutes(JEJU_CITY, SEOGWIPO)
+
+
 def test_route_reports_places_that_dont_fit():
     # 하루에 다 못 들어가는 양이면 빠진 곳을 알려준다
     many = [stop(f"jeju-0{n:02d}", stay=180) for n in range(1, 10)]

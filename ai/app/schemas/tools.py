@@ -128,6 +128,8 @@ class SearchPlacesIn(BaseModel):
 class PlaceHit(BaseModel):
     place: Place
     score: float
+    # 영업시간 미확인처럼 방문 전에 알아야 할 것. 추천 이유와 따로 둔다.
+    warnings: list[str] = Field(default_factory=list)
 
 
 class SearchPlacesOut(BaseModel):
@@ -212,6 +214,7 @@ class GapSuggestion(BaseModel):
     travel_minutes: int
     stay_minutes: int
     reason: str
+    warnings: list[str] = Field(default_factory=list)
 
 
 class FillGapOut(BaseModel):
